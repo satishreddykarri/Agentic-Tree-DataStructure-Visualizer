@@ -21,58 +21,58 @@
   - Import Bootstrap and override with theme variables
   - _Requirements: 10.1_
 
-- [ ] 3. Set up Redux store and slices
-- [ ] 3.1 Create Redux store with authSlice
+- [x] 3. Set up Redux store and slices
+- [x] 3.1 Create Redux store with authSlice
   - Create `src/store/index.ts` with `configureStore`
   - Create `src/store/authSlice.ts` with `user`, `token`, `isLoading`, `error` state
   - Implement `loginThunk`, `registerThunk`, `logoutAction` async thunks
   - Persist token to `localStorage` via store subscriber
   - _Requirements: 1.1, 1.2_
 
-- [ ] 3.2 Create treeSlice
+- [x] 3.2 Create treeSlice
   - Create `src/store/treeSlice.ts` with full `TreeState` interface
   - Implement reducers: `setTree`, `addNode`, `deleteNode`, `editNode`, `resetTree`, `setHighlight`, `setTraversalSequence`
   - Implement async thunks: `saveSessionThunk`, `loadSessionThunk`
   - _Requirements: 3.1, 3.2, 4.1, 4.2, 4.3, 4.5_
 
-- [ ] 3.3 Create chatSlice
+- [x] 3.3 Create chatSlice
   - Create `src/store/chatSlice.ts` with `messages`, `isTyping`, `error` state
   - Implement reducers: `addMessage`, `setTyping`, `clearChat`
   - Implement async thunk: `sendMessageThunk` that calls `/chat/message` and dispatches tree updates
   - _Requirements: 6.1, 6.2, 6.3, 9.1_
 
-- [ ] 4. Create API client layer
+- [x] 4. Create API client layer
   - Create `src/api/axiosClient.ts` with base URL from `VITE_API_BASE_URL` env var
   - Add request interceptor to attach JWT `Authorization: Bearer` header
   - Add response interceptor to dispatch logout on 401
   - Create `src/api/authApi.ts`, `src/api/treeApi.ts`, `src/api/chatApi.ts` with typed functions
   - _Requirements: 1.4, 1.5_
 
-- [ ] 5. Build authentication pages
-- [ ] 5.1 Create AuthPage with Login and Register forms
+- [x] 5. Build authentication pages
+- [x] 5.1 Create AuthPage with Login and Register forms
   - Create `src/pages/AuthPage.tsx` with tab-based Login/Register toggle
   - Login form: email + password fields with validation
   - Register form: name + email + password fields with validation
   - Dispatch `loginThunk` / `registerThunk` on submit, show loading state and errors
   - _Requirements: 1.1, 1.2, 1.3_
 
-- [ ] 5.2 Create ProtectedRoute component
+- [x] 5.2 Create ProtectedRoute component
   - Create `src/components/ProtectedRoute.tsx` that reads `auth.token` from Redux
   - Redirect unauthenticated users to `/auth`
   - _Requirements: 1.4, 1.5_
 
-- [ ] 5.3 Set up React Router with routes
+- [x] 5.3 Set up React Router with routes
   - Configure routes in `src/App.tsx`: `/auth`, `/dashboard`, `/workspace/:sessionId`
   - Wrap `/dashboard` and `/workspace/:sessionId` with `ProtectedRoute`
   - _Requirements: 1.4_
 
-- [ ] 6. Build the Dashboard page
+- [x] 6. Build the Dashboard page
   - Create `src/pages/DashboardPage.tsx` that fetches and lists user sessions via `GET /tree/sessions`
   - Render session cards with name, created date, Edit (rename) and Delete actions
   - Add "New Session" button that calls `POST /tree/session` and navigates to workspace
   - _Requirements: 8.1, 8.4, 8.5_
 
-- [ ] 7. Build the Navbar component
+- [x] 7. Build the Navbar component
   - Create `src/components/Navbar/Navbar.tsx` with 60px fixed height
   - Left: TreeView AI snowflake logo SVG + app name
   - Right: Save Tree button, Load Tree button, theme toggle icon, settings icon, user avatar, logout button
@@ -80,33 +80,33 @@
   - Theme toggle reads/writes theme preference to `localStorage` and toggles CSS class on `<body>`
   - _Requirements: 2.1, 10.2, 10.3_
 
-- [ ] 8. Build the Left Sidebar component
-- [ ] 8.1 Create TreeOperationsPanel
+- [x] 8. Build the Left Sidebar component
+- [x] 8.1 Create TreeOperationsPanel
   - Create `src/components/LeftSidebar/TreeOperationsPanel.tsx`
   - Render Add Node, Delete Node, Edit Node, Search Node, Connect Nodes buttons with icons
   - Each button opens a modal or inline form for input
   - On submit, dispatch the corresponding treeSlice action and call the backend API
   - _Requirements: 4.1, 4.2, 4.3, 4.4_
 
-- [ ] 8.2 Create TraversalPanel
+- [x] 8.2 Create TraversalPanel
   - Create `src/components/LeftSidebar/TraversalPanel.tsx`
   - Render Pre-order, In-order, Post-order buttons with directional arrow icons
   - On click, call traversal utility, set `traversalSequence` in Redux, animate node highlights with `setTimeout` delays
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
-- [ ] 8.3 Assemble LeftSidebar with pinned Reset button
+- [x] 8.3 Assemble LeftSidebar with pinned Reset button
   - Create `src/components/LeftSidebar/LeftSidebar.tsx` composing both panels
   - Use flexbox column with `justify-content: space-between` to pin Reset Tree button to bottom
   - Reset Tree button dispatches `resetTree` and calls `PUT /tree/session/{id}` with empty tree
   - _Requirements: 2.2, 4.5_
 
-- [ ] 9. Build tree utility functions
+- [x] 9. Build tree utility functions
   - Create `src/utils/treeLayout.ts` with `computeLayout(nodes, rootId)` returning React Flow node positions
   - Create `src/utils/traversal.ts` with `preorder`, `inorder`, `postorder` functions returning ordered node ID arrays
   - _Requirements: 3.4, 5.1, 5.2, 5.3_
 
 - [ ] 10. Build the Tree Canvas component
-- [ ] 10.1 Create CustomTreeNode and CustomEdge
+- [x] 10.1 Create CustomTreeNode and CustomEdge
   - Create `src/components/TreeCanvas/CustomTreeNode.tsx` as a React Flow custom node
   - Render circular node with value, apply highlight class based on `data.highlight` prop
   - Create `src/components/TreeCanvas/CustomEdge.tsx` with themed edge styling
@@ -119,7 +119,7 @@
   - Show `EmptyState` component when `rootId` is null
   - _Requirements: 2.3, 3.1, 3.4, 3.5_
 
-- [ ] 10.3 Create EmptyState component
+- [x] 10.3 Create EmptyState component
   - Create `src/components/TreeCanvas/EmptyState.tsx`
   - Render tree icon SVG, "Start building your tree" heading, subtitle text, and "Add Root Node" button
   - Match the mockup layout exactly
@@ -278,7 +278,7 @@
   - Create `frontend/src/components/ChatPanel/ChatPanel.test.tsx` testing message display
   - _Requirements: 12.3_
 
-- [ ]* 22. Write Playwright end-to-end tests
+- [ ] 22. Write Playwright end-to-end tests
   - Create `frontend/e2e/auth.spec.ts` covering register and login flow against running app
   - Create `frontend/e2e/tree_workflow.spec.ts` covering session creation, adding nodes via chat, and verifying canvas
   - _Requirements: 12.4, 12.5_
