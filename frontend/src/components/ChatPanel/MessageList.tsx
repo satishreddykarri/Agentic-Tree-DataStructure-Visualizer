@@ -22,7 +22,7 @@ export default function MessageList() {
           </div>
           <p style={s.welcomeText}>
             Hello! How can I help you build your tree? Try{' '}
-            <em>'create a binary tree with nodes 5, 3, 8'</em>.
+            <em>'insert node 5 as left child of node 10'</em>.
           </p>
         </div>
       ) : (

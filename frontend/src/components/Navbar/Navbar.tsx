@@ -43,7 +43,7 @@ export default function Navbar({ onLoadTree }: NavbarProps) {
             />
           </svg>
         </div>
-        <span style={s.appName}>TreeView AI</span>
+        <span style={s.appName}>Agentic Tree</span>
       </div>
 
       {/* Right — Actions */}

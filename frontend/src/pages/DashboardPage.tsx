@@ -82,7 +82,7 @@ export default function DashboardPage() {
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
             <path d="M12 2L9 7H3L7.5 11L5.5 17L12 13.5L18.5 17L16.5 11L21 7H15L12 2Z" fill="#1da1f2" />
           </svg>
-          <span style={s.logoText}>TreeView AI</span>
+          <span style={s.logoText}>Agentic Tree</span>
         </div>
         <div style={s.headerRight}>
           <span style={s.userName}>{user?.name}</span>

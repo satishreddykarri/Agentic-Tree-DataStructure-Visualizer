@@ -79,7 +79,7 @@ export default function AuthPage() {
               />
             </svg>
           </div>
-          <h1 style={styles.title}>TreeView AI</h1>
+          <h1 style={styles.title}>Agentic Tree</h1>
           <p style={styles.subtitle}>AI-powered binary tree visualization</p>
         </div>
 
