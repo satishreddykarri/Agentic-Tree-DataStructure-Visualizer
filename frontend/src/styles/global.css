@@ -1,0 +1,127 @@
+/* ============================================
+   TreeView AI — Global Styles & Theme Tokens
+   ============================================ */
+
+/* ---------- Dark Theme (default) ---------- */
+:root,
+[data-theme='dark'] {
+  --bg:           #07121c;
+  --sidebar:      #0b1824;
+  --panel:        #0f1f2d;
+  --panel-alt:    #112233;
+  --border:       #1e3446;
+  --primary:      #1da1f2;
+  --primary-hover:#1a91da;
+  --text:         #ffffff;
+  --text-muted:   #8fa6b8;
+  --text-dim:     #4a6278;
+  --success:      #22c55e;
+  --danger:       #ef4444;
+  --warning:      #f59e0b;
+  --node-bg:      #0f1f2d;
+  --node-border:  #1da1f2;
+  --node-text:    #ffffff;
+  --node-highlight: #1da1f2;
+  --node-found:   #22c55e;
+  --scrollbar-bg: #0b1824;
+  --scrollbar-thumb: #1e3446;
+}
+
+/* ---------- Light Theme ---------- */
+[data-theme='light'] {
+  --bg:           #f0f4f8;
+  --sidebar:      #e2e8f0;
+  --panel:        #ffffff;
+  --panel-alt:    #f8fafc;
+  --border:       #cbd5e1;
+  --primary:      #1da1f2;
+  --primary-hover:#1a91da;
+  --text:         #0f172a;
+  --text-muted:   #475569;
+  --text-dim:     #94a3b8;
+  --success:      #16a34a;
+  --danger:       #dc2626;
+  --warning:      #d97706;
+  --node-bg:      #ffffff;
+  --node-border:  #1da1f2;
+  --node-text:    #0f172a;
+  --node-highlight: #1da1f2;
+  --node-found:   #16a34a;
+  --scrollbar-bg: #e2e8f0;
+  --scrollbar-thumb: #94a3b8;
+}
+
+/* ---------- Base Reset ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* ---------- Bootstrap Overrides ---------- */
+.btn-primary {
+  background-color: var(--primary) !important;
+  border-color: var(--primary) !important;
+  color: #fff !important;
+}
+.btn-primary:hover {
+  background-color: var(--primary-hover) !important;
+  border-color: var(--primary-hover) !important;
+}
+.btn-outline-primary {
+  color: var(--primary) !important;
+  border-color: var(--primary) !important;
+}
+.btn-outline-primary:hover {
+  background-color: var(--primary) !important;
+  color: #fff !important;
+}
+
+/* ---------- Utility Classes ---------- */
+.text-muted-custom {
+  color: var(--text-muted) !important;
+}
+.bg-panel {
+  background-color: var(--panel) !important;
+}
+.bg-sidebar {
+  background-color: var(--sidebar) !important;
+}
+.border-theme {
+  border-color: var(--border) !important;
+}
