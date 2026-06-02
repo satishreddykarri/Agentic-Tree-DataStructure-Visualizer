@@ -139,7 +139,7 @@ def tree_operation_node(state: AgentState) -> AgentState:
     """Parses user message into a tree action and applies it to the tree state."""
     try:
         llm = ChatGoogleGenerativeAI(
-            model="gemini-1.5-flash",
+            model="gemini-2.0-flash",
             google_api_key=settings.gemini_api_key,
             temperature=0,
         )
