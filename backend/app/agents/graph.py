@@ -10,40 +10,40 @@ def route_after_supervisor(state: AgentState) -> str:
     """Route to the correct agent based on classified intent."""
     intent = state.get("intent", "UNKNOWN")
     if intent == "TREE_OPERATION":
-        return "tree_operation"
+        return "operation_agent"
     elif intent == "TREE_QUERY":
-        return "tree_query"
+        return "query_agent"
     else:
-        return "explanation"
+        return "explain_agent"
 
 
 def build_graph() -> StateGraph:
     graph = StateGraph(AgentState)
 
-    # Add nodes
-    graph.add_node("supervisor", supervisor_node)
-    graph.add_node("tree_operation", tree_operation_node)
-    graph.add_node("tree_query", tree_query_node)
-    graph.add_node("explanation", explanation_node)
+    # Add nodes — names must not clash with AgentState field names
+    graph.add_node("supervisor_agent", supervisor_node)
+    graph.add_node("operation_agent", tree_operation_node)
+    graph.add_node("query_agent", tree_query_node)
+    graph.add_node("explain_agent", explanation_node)
 
     # Entry point
-    graph.set_entry_point("supervisor")
+    graph.set_entry_point("supervisor_agent")
 
     # Conditional routing after supervisor
     graph.add_conditional_edges(
-        "supervisor",
+        "supervisor_agent",
         route_after_supervisor,
         {
-            "tree_operation": "tree_operation",
-            "tree_query": "tree_query",
-            "explanation": "explanation",
+            "operation_agent": "operation_agent",
+            "query_agent": "query_agent",
+            "explain_agent": "explain_agent",
         },
     )
 
     # Both agents flow into explanation
-    graph.add_edge("tree_operation", "explanation")
-    graph.add_edge("tree_query", "explanation")
-    graph.add_edge("explanation", END)
+    graph.add_edge("operation_agent", "explain_agent")
+    graph.add_edge("query_agent", "explain_agent")
+    graph.add_edge("explain_agent", END)
 
     return graph
 
