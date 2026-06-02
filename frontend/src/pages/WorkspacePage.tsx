@@ -29,7 +29,7 @@ export default function WorkspacePage() {
 
     getChatHistory(sessionId)
       .then((history: ChatMessage[]) => dispatch(loadChatHistory(history)))
-      .catch(() => { /* no history yet is fine */ })
+      .catch(() => { /* backend not running yet — that's ok */ })
   }, [sessionId, dispatch])
 
   // Load sessions list for the Load Tree modal
@@ -46,14 +46,8 @@ export default function WorkspacePage() {
     navigate(`/workspace/${id}`)
   }
 
-  if (error) {
-    return (
-      <div style={s.errorPage}>
-        <p style={{ color: '#f87171' }}>{error}</p>
-        <button style={s.backBtn} onClick={() => navigate('/dashboard')}>Back to Dashboard</button>
-      </div>
-    )
-  }
+  // Don't block the UI for session load errors — backend may not be running yet
+  // Error is shown in the canvas area instead
 
   return (
     <div style={s.root}>
@@ -188,19 +182,6 @@ const s: Record<string, React.CSSProperties> = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  errorPage: {
-    height: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'var(--bg)',
-    gap: '16px',
-  },
-  backBtn: {
-    backgroundColor: 'var(--primary)', color: '#fff', border: 'none',
-    borderRadius: '8px', padding: '10px 20px', fontSize: '14px', cursor: 'pointer',
   },
   modalOverlay: {
     position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)',
