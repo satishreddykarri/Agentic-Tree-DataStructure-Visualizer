@@ -18,11 +18,12 @@ axiosClient.interceptors.request.use((config) => {
   return config
 })
 
-// Auto-logout on 401
+// Auto-logout on 401 — but NOT for auth endpoints (login/register failures are expected 401s)
 axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const isAuthEndpoint = error.config?.url?.includes('/auth/')
+    if (error.response?.status === 401 && !isAuthEndpoint) {
       store.dispatch(logout())
     }
     // Normalize error message for rejectWithValue
