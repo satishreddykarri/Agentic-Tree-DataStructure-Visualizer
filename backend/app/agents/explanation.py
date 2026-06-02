@@ -29,9 +29,7 @@ def explanation_node(state: AgentState) -> AgentState:
             return {**state, "explanation": _fallback_explanation(state)}
 
         llm = ChatGroq(
-            model="llama3-8b-8192",
-            groq_api_key=settings.groq_api_key,
-            temperature=0.3,
+            model="llama-3.3-70b-versatile",
         )
 
         action_str = json.dumps(state.get("action"), indent=2) if state.get("action") else "None"
