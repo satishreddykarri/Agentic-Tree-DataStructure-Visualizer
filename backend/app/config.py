@@ -1,4 +1,8 @@
+import os
 from pydantic_settings import BaseSettings
+
+# Resolve .env path relative to this file's location
+_ENV_PATH = os.path.join(os.path.dirname(__file__), "..", "..", ".env")
 
 
 class Settings(BaseSettings):
@@ -23,9 +27,11 @@ class Settings(BaseSettings):
     def cors_origins_list(self) -> list[str]:
         return [o.strip() for o in self.cors_origins.split(",")]
 
-    class Config:
-        env_file = "../.env"
-        extra = "ignore"
+    model_config = {
+        "env_file": _ENV_PATH,
+        "env_file_encoding": "utf-8",
+        "extra": "ignore",
+    }
 
 
 def get_settings() -> Settings:
