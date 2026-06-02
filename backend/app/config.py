@@ -11,8 +11,11 @@ class Settings(BaseSettings):
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 60 * 24  # 24 hours
 
-    # Gemini
+    # Gemini (kept for reference)
     gemini_api_key: str = ""
+
+    # Groq
+    groq_api_key: str = ""
 
     # CORS
     cors_origins: str = "http://localhost:5173,http://localhost:80"

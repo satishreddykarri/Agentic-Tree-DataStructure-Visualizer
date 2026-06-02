@@ -1,5 +1,5 @@
 import json
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_groq import ChatGroq
 from app.config import get_settings
 from app.agents.state import AgentState
 
@@ -15,27 +15,22 @@ Error (if any): {error}
 
 Guidelines:
 - If there was an error, explain it clearly and suggest how to fix it
-- If it was a tree operation (insert/delete/edit/reset), confirm what was done in 1-2 sentences
+- If it was a tree operation, confirm what was done in 1-2 sentences
 - If it was a query, explain the result clearly with the actual values
-- Keep it conversational and friendly
 - For traversals, show the sequence like: 10 → 5 → 15
-- If the tree is empty and user asks about it, gently let them know
-- Never mention internal implementation details
+- Keep it conversational and friendly, 2-3 sentences max
 
-Response (2-3 sentences max):"""
+Response:"""
 
 
 def explanation_node(state: AgentState) -> AgentState:
-    """Generates a human-readable explanation using Gemini."""
     try:
-        # If no API key configured, return a basic fallback
-        if not settings.gemini_api_key:
-            explanation = _fallback_explanation(state)
-            return {**state, "explanation": explanation}
+        if not settings.groq_api_key:
+            return {**state, "explanation": _fallback_explanation(state)}
 
-        llm = ChatGoogleGenerativeAI(
-            model="gemini-2.0-flash",
-            google_api_key=settings.gemini_api_key,
+        llm = ChatGroq(
+            model="llama3-8b-8192",
+            groq_api_key=settings.groq_api_key,
             temperature=0.3,
         )
 
@@ -49,18 +44,13 @@ def explanation_node(state: AgentState) -> AgentState:
         )
 
         response = llm.invoke(prompt)
-        explanation = response.content.strip()
+        return {**state, "explanation": response.content.strip()}
 
-        return {**state, "explanation": explanation}
-
-    except Exception as e:
-        # Fallback to rule-based explanation if Gemini fails
-        explanation = _fallback_explanation(state)
-        return {**state, "explanation": explanation}
+    except Exception:
+        return {**state, "explanation": _fallback_explanation(state)}
 
 
 def _fallback_explanation(state: AgentState) -> str:
-    """Rule-based fallback when Gemini is unavailable."""
     error = state.get("error")
     action = state.get("action")
     intent = state.get("intent", "UNKNOWN")
