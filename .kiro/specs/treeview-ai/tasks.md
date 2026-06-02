@@ -105,14 +105,14 @@
   - Create `src/utils/traversal.ts` with `preorder`, `inorder`, `postorder` functions returning ordered node ID arrays
   - _Requirements: 3.4, 5.1, 5.2, 5.3_
 
-- [ ] 10. Build the Tree Canvas component
+- [x] 10. Build the Tree Canvas component
 - [x] 10.1 Create CustomTreeNode and CustomEdge
   - Create `src/components/TreeCanvas/CustomTreeNode.tsx` as a React Flow custom node
   - Render circular node with value, apply highlight class based on `data.highlight` prop
   - Create `src/components/TreeCanvas/CustomEdge.tsx` with themed edge styling
   - _Requirements: 3.1, 3.2, 5.1_
 
-- [ ] 10.2 Create TreeCanvas with React Flow
+- [x] 10.2 Create TreeCanvas with React Flow
   - Create `src/components/TreeCanvas/TreeCanvas.tsx`
   - Subscribe to `treeSlice` state, convert to React Flow `nodes` and `edges` arrays using `computeLayout`
   - Render `<ReactFlow>` with custom node/edge types, zoom controls, pan on drag
@@ -125,122 +125,122 @@
   - Match the mockup layout exactly
   - _Requirements: 3.5_
 
-- [ ] 11. Build the Chat Panel component
-- [ ] 11.1 Create MessageBubble and MessageList
+- [x] 11. Build the Chat Panel component
+- [x] 11.1 Create MessageBubble and MessageList
   - Create `src/components/ChatPanel/MessageBubble.tsx` with user/assistant styling and timestamp
   - Create `src/components/ChatPanel/MessageList.tsx` that maps `chatSlice.messages` to bubbles
   - Auto-scroll to bottom on new message using `useEffect` + `scrollIntoView`
   - _Requirements: 6.4, 9.5_
 
-- [ ] 11.2 Create ChatInputFooter and TypingIndicator
+- [x] 11.2 Create ChatInputFooter and TypingIndicator
   - Create `src/components/ChatPanel/ChatInputFooter.tsx` with text input and Send button
   - On send, dispatch `sendMessageThunk` with message text and current tree state
   - Create `src/components/ChatPanel/TypingIndicator.tsx` with animated dots shown when `isTyping` is true
   - _Requirements: 6.3, 6.1_
 
-- [ ] 11.3 Assemble ChatPanel
+- [x] 11.3 Assemble ChatPanel
   - Create `src/components/ChatPanel/ChatPanel.tsx` composing header, message list, typing indicator, and input footer
   - Add Export Chat button that serializes `chatSlice.messages` to JSON and triggers browser download
   - Add Clear Chat button that dispatches `clearChat` and calls `DELETE /chat/history/{sessionId}`
   - _Requirements: 2.4, 9.3, 9.4_
 
-- [ ] 12. Assemble WorkspacePage
+- [x] 12. Assemble WorkspacePage
   - Create `src/pages/WorkspacePage.tsx` with three-panel CSS Grid layout
   - Load session on mount via `loadSessionThunk` using `sessionId` from URL params
   - Compose `<Navbar>`, `<LeftSidebar>`, `<TreeCanvas>`, `<ChatPanel>`
   - Implement responsive breakpoints: collapse sidebar on tablet, full-screen chat on mobile
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 8.3_
 
-- [ ] 13. Set up backend project
-- [ ] 13.1 Create FastAPI app entry point and config
+- [x] 13. Set up backend project
+- [x] 13.1 Create FastAPI app entry point and config
   - Create `backend/app/main.py` with FastAPI app, CORS middleware, and router includes
   - Create `backend/app/config.py` using `pydantic-settings` for env var loading (`DATABASE_URL`, `SECRET_KEY`, `GEMINI_API_KEY`, `CORS_ORIGINS`)
   - Create `backend/requirements.txt` with pinned versions: `fastapi==0.111.0`, `uvicorn==0.29.0`, `sqlalchemy==2.0.30`, `alembic==1.13.1`, `psycopg2-binary==2.9.9`, `python-jose==3.3.0`, `passlib[bcrypt]==1.7.4`, `pydantic-settings==2.2.1`, `langchain==0.2.5`, `langgraph==0.1.5`, `langchain-google-genai==1.0.6`, `httpx==0.27.0`, `pytest==8.2.2`, `pytest-asyncio==0.23.7`
   - _Requirements: 11.2_
 
-- [ ] 13.2 Set up SQLAlchemy database connection
+- [x] 13.2 Set up SQLAlchemy database connection
   - Create `backend/app/database.py` with engine, `SessionLocal`, and `Base`
   - Create `backend/app/dependencies.py` with `get_db` and `get_current_user` dependency functions
   - _Requirements: 11.3_
 
-- [ ] 14. Create database models and run migrations
-- [ ] 14.1 Create SQLAlchemy models
+- [x] 14. Create database models and run migrations
+- [x] 14.1 Create SQLAlchemy models
   - Create `backend/app/models/user.py` with `User` model (id UUID, name, email, password_hash, timestamps)
   - Create `backend/app/models/tree_session.py` with `TreeSession` model (id UUID, user_id FK, name, tree_json JSONB, timestamps)
   - Create `backend/app/models/chat_history.py` with `ChatHistory` model (id UUID, user_id FK, session_id FK, role, message, timestamp)
   - _Requirements: 8.1, 9.1_
 
-- [ ] 14.2 Configure Alembic and create initial migration
+- [x] 14.2 Configure Alembic and create initial migration
   - Configure `alembic.ini` and `alembic/env.py` to use `DATABASE_URL` from config
   - Generate initial migration with `alembic revision --autogenerate -m "initial schema"`
   - _Requirements: 11.3_
 
-- [ ] 15. Implement authentication backend
-- [ ] 15.1 Create auth schemas and service
+- [x] 15. Implement authentication backend
+- [x] 15.1 Create auth schemas and service
   - Create `backend/app/schemas/auth.py` with `RegisterRequest`, `LoginRequest`, `TokenResponse`, `UserResponse` Pydantic models
   - Create `backend/app/services/auth_service.py` with `hash_password`, `verify_password`, `create_access_token`, `decode_token` functions
   - Create `backend/app/repositories/user_repository.py` with `create_user`, `get_user_by_email` functions
   - _Requirements: 1.1, 1.2_
 
-- [ ] 15.2 Create auth router
+- [x] 15.2 Create auth router
   - Create `backend/app/routers/auth.py` with `POST /auth/register`, `POST /auth/login`, `GET /auth/profile` endpoints
   - Register: validate unique email, hash password, create user, return JWT
   - Login: verify credentials, return JWT
   - Profile: return current user from JWT dependency
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
-- [ ] 16. Implement tree session backend
-- [ ] 16.1 Create tree schemas and repository
+- [x] 16. Implement tree session backend
+- [x] 16.1 Create tree schemas and repository
   - Create `backend/app/schemas/tree.py` with `SessionCreateRequest`, `SessionUpdateRequest`, `SessionResponse` Pydantic models
   - Create `backend/app/repositories/tree_repository.py` with `create_session`, `get_session`, `update_session`, `delete_session`, `list_sessions` functions
   - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
 
-- [ ] 16.2 Create tree service and router
+- [x] 16.2 Create tree service and router
   - Create `backend/app/services/tree_service.py` with business logic wrapping the repository
   - Create `backend/app/routers/tree.py` with all session CRUD endpoints
   - Enforce ownership check: users can only access their own sessions
   - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
 
-- [ ] 17. Implement LangGraph multi-agent system
-- [ ] 17.1 Define AgentState and graph skeleton
+- [x] 17. Implement LangGraph multi-agent system
+- [x] 17.1 Define AgentState and graph skeleton
   - Create `backend/app/agents/graph.py` with `AgentState` TypedDict and `StateGraph` definition
   - Wire nodes: `supervisor → tree_operation | tree_query | explanation → END`
   - Export `compiled_graph = graph.compile()`
   - _Requirements: 7.1, 7.2, 7.3, 7.4_
 
-- [ ] 17.2 Implement Supervisor Agent
+- [x] 17.2 Implement Supervisor Agent
   - Create `backend/app/agents/supervisor.py` with `supervisor_node` function
   - Use Gemini with a few-shot classification prompt to set `state["intent"]`
   - Return routing decision: `TREE_OPERATION`, `TREE_QUERY`, or `UNKNOWN`
   - _Requirements: 7.1, 7.5_
 
-- [ ] 17.3 Implement Tree Operation Agent
+- [x] 17.3 Implement Tree Operation Agent
   - Create `backend/app/agents/tree_operation.py` with `tree_operation_node` function
   - Use Gemini to parse the user message into a structured action dict
   - Validate the action against the current `tree_state` (e.g., check parent exists, position is free)
   - Set `state["action"]` with the parsed operation
   - _Requirements: 7.2, 6.1_
 
-- [ ] 17.4 Implement Tree Query Agent
+- [x] 17.4 Implement Tree Query Agent
   - Create `backend/app/agents/tree_query.py` with `tree_query_node` function
   - Implement pure Python functions: `get_height`, `get_leaf_nodes`, `get_node_count`, `get_traversal`, `get_parent`
   - Compute answer from `state["tree_state"]` without calling Gemini
   - Set `state["action"]` with the query result
   - _Requirements: 7.3, 6.2_
 
-- [ ] 17.5 Implement Explanation Agent
+- [x] 17.5 Implement Explanation Agent
   - Create `backend/app/agents/explanation.py` with `explanation_node` function
   - Use Gemini to generate a friendly, educational explanation from `state["action"]`
   - Set `state["explanation"]` with the final response text
   - _Requirements: 7.4, 7.5_
 
-- [ ] 18. Implement chat backend
-- [ ] 18.1 Create chat schemas and repository
+- [x] 18. Implement chat backend
+- [x] 18.1 Create chat schemas and repository
   - Create `backend/app/schemas/chat.py` with `ChatMessageRequest`, `ChatMessageResponse`, `ChatHistoryItem` Pydantic models
   - Create `backend/app/repositories/chat_repository.py` with `save_message`, `get_history`, `delete_history` functions
   - _Requirements: 9.1, 9.2, 9.3_
 
-- [ ] 18.2 Create chat service and router
+- [x] 18.2 Create chat service and router
   - Create `backend/app/services/chat_service.py` that invokes `compiled_graph` with the user message and tree state
   - Persist user message and AI response to `chat_history` table
   - Create `backend/app/routers/chat.py` with `POST /chat/message`, `GET /chat/history/{sessionId}`, `DELETE /chat/history/{sessionId}`
