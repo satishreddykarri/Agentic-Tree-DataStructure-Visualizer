@@ -12,7 +12,7 @@ Parse the user message into a structured JSON action for a generic binary tree.
 Supported operations:
 - INSERT: Add a new node. Requires nodeValue, and if tree has nodes: parentValue and position (left/right)
 - DELETE: Remove a node and all its children. Requires targetNodeValue
-- EDIT: Change a node's value. Requires targetNodeValue and nodeValue (new value)
+- EDIT: Change a node value. Requires targetNodeValue and nodeValue (new value)
 - RESET: Clear the entire tree.
 
 Current tree state:
@@ -75,18 +75,24 @@ def apply_operation(tree_state: dict, action: dict) -> tuple[dict, str | None]:
             return tree_state, f"Node with value {target_value} not found"
 
         to_delete = set()
+
         def collect(nid):
             to_delete.add(nid)
             n = nodes.get(nid, {})
-            if n.get("left"): collect(n["left"])
-            if n.get("right"): collect(n["right"])
+            if n.get("left"):
+                collect(n["left"])
+            if n.get("right"):
+                collect(n["right"])
+
         collect(target["id"])
 
         parent_id = target.get("parentId")
         if parent_id and parent_id in nodes:
             parent = dict(nodes[parent_id])
-            if parent.get("left") == target["id"]: parent["left"] = None
-            if parent.get("right") == target["id"]: parent["right"] = None
+            if parent.get("left") == target["id"]:
+                parent["left"] = None
+            if parent.get("right") == target["id"]:
+                parent["right"] = None
             nodes[parent_id] = parent
 
         for nid in to_delete:
@@ -113,6 +119,11 @@ def tree_operation_node(state: AgentState) -> AgentState:
     try:
         llm = ChatGroq(
             model="llama-3.3-70b-versatile",
+            groq_api_key=settings.groq_api_key,
+            temperature=0,
+        )
+
+        prompt = OPERATION_PROMPT.format(
             message=state["message"],
             tree_state=json.dumps(state["tree_state"], indent=2),
         )
@@ -120,14 +131,12 @@ def tree_operation_node(state: AgentState) -> AgentState:
         response = llm.invoke(prompt)
         raw = response.content.strip()
 
-        # Strip markdown fences if present
         if "```" in raw:
             raw = raw.split("```")[1]
             if raw.startswith("json"):
                 raw = raw[4:]
         raw = raw.strip()
 
-        # Extract JSON object
         start = raw.find("{")
         end = raw.rfind("}") + 1
         if start >= 0 and end > start:
