@@ -1,7 +1,7 @@
 import os
 from pydantic_settings import BaseSettings
 
-# Resolve .env path relative to this file's location
+# Resolve .env path — works both locally and in Docker
 _ENV_PATH = os.path.join(os.path.dirname(__file__), "..", "..", ".env")
 
 
@@ -20,8 +20,8 @@ class Settings(BaseSettings):
     # Groq
     groq_api_key: str = ""
 
-    # CORS
-    cors_origins: str = "http://localhost:5173,http://localhost:80"
+    # CORS — allow all localhost variants by default
+    cors_origins: str = "http://localhost,http://localhost:80,http://localhost:5173,http://localhost:3000,http://127.0.0.1"
 
     @property
     def cors_origins_list(self) -> list[str]:
