@@ -32,6 +32,10 @@ def supervisor_node(state: AgentState) -> AgentState:
     try:
         llm = ChatGroq(
             model="llama-3.3-70b-versatile",
+            groq_api_key=settings.groq_api_key,
+            temperature=0,
+        )
+        prompt = SUPERVISOR_PROMPT.format(message=state["message"])
         response = llm.invoke(prompt)
         intent = response.content.strip().upper()
 

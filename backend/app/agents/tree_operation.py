@@ -25,6 +25,7 @@ Respond with ONLY valid JSON, no explanation, no markdown:
 
 
 def find_node_by_value(nodes: dict, value: int) -> dict | None:
+    """nodes should be a flat dict of {id: node_obj}"""
     return next((n for n in nodes.values() if n.get("value") == value), None)
 
 
@@ -40,7 +41,7 @@ def apply_operation(tree_state: dict, action: dict) -> tuple[dict, str | None]:
         node_value = action.get("nodeValue")
         if node_value is None:
             return tree_state, "No node value provided"
-        if find_node_by_value({"nodes": nodes}, node_value):
+        if find_node_by_value(nodes, node_value):
             return tree_state, f"Node with value {node_value} already exists"
 
         new_id = str(uuid.uuid4())
@@ -55,7 +56,7 @@ def apply_operation(tree_state: dict, action: dict) -> tuple[dict, str | None]:
         if parent_value is None or position not in ("left", "right"):
             return tree_state, "Parent value and position (left/right) required"
 
-        parent = find_node_by_value({"nodes": nodes}, parent_value)
+        parent = find_node_by_value(nodes, parent_value)
         if not parent:
             return tree_state, f"Parent node with value {parent_value} not found"
         if nodes[parent["id"]][position]:
@@ -70,7 +71,7 @@ def apply_operation(tree_state: dict, action: dict) -> tuple[dict, str | None]:
         target_value = action.get("targetNodeValue")
         if target_value is None:
             return tree_state, "No target node value provided"
-        target = find_node_by_value({"nodes": nodes}, target_value)
+        target = find_node_by_value(nodes, target_value)
         if not target:
             return tree_state, f"Node with value {target_value} not found"
 
@@ -106,7 +107,7 @@ def apply_operation(tree_state: dict, action: dict) -> tuple[dict, str | None]:
         new_value = action.get("nodeValue")
         if target_value is None or new_value is None:
             return tree_state, "Target and new value required"
-        target = find_node_by_value({"nodes": nodes}, target_value)
+        target = find_node_by_value(nodes, target_value)
         if not target:
             return tree_state, f"Node with value {target_value} not found"
         nodes[target["id"]] = {**nodes[target["id"]], "value": new_value}
