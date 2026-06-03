@@ -3,6 +3,9 @@
 .env.local
 .env.production
 
+# Kiro IDE files
+.kiro/
+
 # Python
 backend/venv/
 backend/__pycache__/
