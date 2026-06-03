@@ -4,7 +4,7 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Accept build-time API URL
-ARG VITE_API_BASE_URL=http://localhost:8000
+ARG VITE_API_BASE_URL=https://agentic-tree-datastructure-visualizer.onrender.com/
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 
 # Install dependencies

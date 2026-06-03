@@ -2,7 +2,7 @@ import axios from 'axios'
 import { store } from '@/store'
 import { logout } from '@/store/authSlice'
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'https://agentic-tree-datastructure-visualizer.onrender.com/'
 
 const axiosClient = axios.create({
   baseURL: BASE_URL,
