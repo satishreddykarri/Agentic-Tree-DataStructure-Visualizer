@@ -1,124 +1,144 @@
-# AWS EC2 Deployment Guide — Agentic Tree
+# Deployment Guide — Agentic Tree
 
-## Prerequisites
+## Live Deployment
 
-- AWS account
-- EC2 instance: Ubuntu 22.04 LTS (t3.small or larger)
-- Security group allowing ports: 22 (SSH), 80 (HTTP), 443 (HTTPS), 8000 (API)
-
----
-
-## Step 1 — Launch EC2 Instance
-
-1. Go to AWS Console → EC2 → Launch Instance
-2. Choose **Ubuntu Server 22.04 LTS**
-3. Instance type: **t3.small** (minimum)
-4. Configure security group:
-   - SSH: port 22 (your IP)
-   - HTTP: port 80 (anywhere)
-   - Custom TCP: port 8000 (anywhere)
-5. Create/select a key pair and download it
-6. Launch the instance
+| Service | URL |
+|---------|-----|
+| Frontend | https://agentic-tree-datastructure-visualizer-1.onrender.com |
+| Backend API | https://agentic-tree-datastructure-visualizer.onrender.com |
+| API Docs | https://agentic-tree-datastructure-visualizer.onrender.com/docs |
 
 ---
 
-## Step 2 — Connect to the Instance
+## Deployment Platform: Render
 
-```bash
-chmod 400 your-key.pem
-ssh -i your-key.pem ubuntu@<EC2-PUBLIC-IP>
+The application is deployed on [Render](https://render.com) using Docker containers.
+
+---
+
+## Backend Deployment on Render
+
+### Steps
+
+1. Go to [render.com](https://render.com) → New → Web Service
+2. Connect your GitHub repository
+3. Configure:
+   - **Name**: `agentic-tree-backend`
+   - **Root Directory**: `backend`
+   - **Environment**: `Docker`
+   - **Dockerfile Path**: `Dockerfile`
+   - **Port**: `8000`
+
+4. Add Environment Variables:
+```
+DATABASE_URL=your-neon-postgresql-connection-string
+SECRET_KEY=your-strong-secret-key
+GROQ_API_KEY=your-groq-api-key
+CORS_ORIGINS=https://your-frontend-url.onrender.com,http://localhost:5173
 ```
 
+5. Click **Deploy**
+
+The `entrypoint.sh` automatically runs `alembic upgrade head` to create database tables on first deploy.
+
 ---
 
-## Step 3 — Install Docker and Docker Compose
+## Frontend Deployment on Render
 
-```bash
-# Update packages
-sudo apt-get update && sudo apt-get upgrade -y
+### Steps
 
-# Install Docker
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
+1. Go to [render.com](https://render.com) → New → Web Service
+2. Connect your GitHub repository
+3. Configure:
+   - **Name**: `agentic-tree-frontend`
+   - **Root Directory**: `frontend`
+   - **Environment**: `Docker`
+   - **Dockerfile Path**: `Dockerfile`
+   - **Port**: `80`
 
-# Add ubuntu user to docker group
-sudo usermod -aG docker ubuntu
-newgrp docker
-
-# Install Docker Compose
-sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-
-# Verify
-docker --version
-docker-compose --version
+4. Add Environment Variables (Build Args):
+```
+VITE_API_BASE_URL=https://your-backend-url.onrender.com
 ```
 
+5. Click **Deploy**
+
 ---
 
-## Step 4 — Clone the Repository
+## Database: Neon PostgreSQL
 
+The application uses [Neon](https://neon.tech) as the managed PostgreSQL database.
+
+1. Create a free account at neon.tech
+2. Create a new project
+3. Copy the connection string
+4. Set it as `DATABASE_URL` in Render environment variables
+
+---
+
+## Local Development
+
+### Prerequisites
+- Node.js 18+, Python 3.11+, Docker Desktop
+
+### Run with Docker Compose
 ```bash
 git clone https://github.com/satishreddykarri/Agentic-Tree-DataStructure-Visualizer.git
 cd Agentic-Tree-DataStructure-Visualizer
-```
-
----
-
-## Step 5 — Configure Environment Variables
-
-```bash
 cp .env.example .env
-nano .env
+# Edit .env with your keys
+docker-compose up --build
 ```
 
-Update these values:
+Visit `http://localhost` for the app.
+
+### Run locally (dev mode)
+
+**Terminal 1 — Database:**
+```bash
+docker run -d --name agentic-tree-db \
+  -e POSTGRES_DB=agentic_tree \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=password \
+  -p 5432:5432 postgres:15
 ```
-DATABASE_URL=postgresql://postgres:yourpassword@postgres:5432/agentic_tree
-SECRET_KEY=your-strong-random-secret-key
-GROQ_API_KEY=your-groq-api-key
-CORS_ORIGINS=http://<EC2-PUBLIC-IP>:80,http://<EC2-PUBLIC-IP>
-VITE_API_BASE_URL=http://<EC2-PUBLIC-IP>:8000
-POSTGRES_PASSWORD=yourpassword
+
+**Terminal 2 — Backend:**
+```bash
+cd backend
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+alembic upgrade head
+uvicorn app.main:app --reload --port 8000
 ```
+
+**Terminal 3 — Frontend:**
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Visit `http://localhost:5173`
 
 ---
 
-## Step 6 — Build and Run
+## Environment Variables Reference
 
-```bash
-docker-compose up -d --build
-```
-
-Check all services are running:
-```bash
-docker-compose ps
-docker-compose logs backend
-```
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `DATABASE_URL` | PostgreSQL connection string | Yes |
+| `SECRET_KEY` | JWT signing secret (min 32 chars) | Yes |
+| `GROQ_API_KEY` | Groq API key from console.groq.com | Yes |
+| `CORS_ORIGINS` | Comma-separated allowed frontend URLs | Yes |
+| `VITE_API_BASE_URL` | Backend URL for frontend build | Yes |
 
 ---
 
-## Step 7 — Verify Deployment
+## Health Check
 
-- Frontend: `http://<EC2-PUBLIC-IP>`
-- Backend API: `http://<EC2-PUBLIC-IP>:8000/docs`
-- Health check: `http://<EC2-PUBLIC-IP>:8000/health`
-
----
-
-## Useful Commands
-
-```bash
-# View logs
-docker-compose logs -f
-
-# Restart services
-docker-compose restart
-
-# Stop everything
-docker-compose down
-
-# Update deployment
-git pull
-docker-compose up -d --build
 ```
+GET https://agentic-tree-datastructure-visualizer.onrender.com/health
+```
+Response: `{"status": "ok", "app": "Agentic Tree API"}`

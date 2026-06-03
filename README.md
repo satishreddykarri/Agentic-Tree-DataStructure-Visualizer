@@ -2,17 +2,25 @@
 
 An AI-powered web application for creating, visualizing, and analyzing Binary Tree data structures through natural language commands and a real-time interactive canvas.
 
+## Live Demo
+
+| | URL |
+|-|-----|
+| Frontend | https://agentic-tree-datastructure-visualizer-1.onrender.com |
+| Backend API | https://agentic-tree-datastructure-visualizer.onrender.com |
+| API Docs | https://agentic-tree-datastructure-visualizer.onrender.com/docs |
+
 ---
 
 ## Features
 
-- **Visual Tree Builder** — Create and manipulate binary trees with drag-free node placement
-- **AI Chat Assistant** — Use natural language: *"insert node 5 as left child of node 10"*
-- **Traversal Animations** — Visualize Preorder, Inorder, and Postorder traversals
-- **Multi-Agent AI** — LangGraph workflow with Supervisor, Operation, Query, and Explanation agents
+- **Visual Tree Builder** — Create and manipulate binary trees with explicit node placement
+- **AI Chat Assistant** — Natural language commands: *"insert node 5 as left child of node 10"*
+- **Traversal Animations** — Visualize Preorder, Inorder, and Postorder traversals step by step
+- **Multi-Agent AI** — LangGraph workflow with Supervisor, Operation, Query, and Explanation agents powered by Groq Llama 3.3
 - **Session Persistence** — Save, load, rename, and delete tree sessions
-- **Chat History** — Full chat history per session
-- **JWT Authentication** — Secure user accounts
+- **Chat History** — Full chat history per session, exportable
+- **JWT Authentication** — Secure user accounts with bcrypt password hashing
 
 ---
 
@@ -20,14 +28,16 @@ An AI-powered web application for creating, visualizing, and analyzing Binary Tr
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | React 18, Vite, TypeScript, Redux Toolkit, React Flow |
-| Backend | FastAPI, SQLAlchemy, PostgreSQL, Alembic |
-| AI | LangGraph, LangChain, Groq (Llama 3.3) |
-| Deployment | Docker, Docker Compose, AWS EC2 |
+| Frontend | React 18, Vite, TypeScript, Redux Toolkit, React Flow, Bootstrap |
+| Backend | FastAPI, SQLAlchemy, PostgreSQL, Alembic, JWT |
+| AI | LangGraph, LangChain, Groq (Llama 3.3-70b) |
+| Database | Neon PostgreSQL (cloud) |
+| Deployment | Render (Docker), Docker Compose |
+| Testing | Pytest, Vitest, Playwright |
 
 ---
 
-## Local Development Setup
+## Local Development
 
 ### Prerequisites
 - Node.js 18+
@@ -43,15 +53,14 @@ cd Agentic-Tree-DataStructure-Visualizer
 ### 2. Set up environment variables
 ```bash
 cp .env.example .env
-# Edit .env and add your GROQ_API_KEY
+# Edit .env and add your GROQ_API_KEY and DATABASE_URL
 ```
 
 ### 3. Start with Docker Compose
 ```bash
 docker-compose up --build
 ```
-
-Visit `http://localhost` for the app and `http://localhost:8000/docs` for the API.
+Visit `http://localhost`
 
 ### 4. Or run locally
 
@@ -59,8 +68,9 @@ Visit `http://localhost` for the app and `http://localhost:8000/docs` for the AP
 ```bash
 cd backend
 python -m venv venv
-venv\Scripts\activate  # Windows
+venv\Scripts\activate
 pip install -r requirements.txt
+alembic upgrade head
 uvicorn app.main:app --reload --port 8000
 ```
 
@@ -70,14 +80,30 @@ cd frontend
 npm install
 npm run dev
 ```
+Visit `http://localhost:5173`
 
-**Database:**
+---
+
+## Running Tests
+
+**Backend unit + API tests:**
 ```bash
-docker run -d --name agentic-tree-db \
-  -e POSTGRES_DB=agentic_tree \
-  -e POSTGRES_USER=postgres \
-  -e POSTGRES_PASSWORD=password \
-  -p 5432:5432 postgres:15
+cd backend
+venv\Scripts\activate
+python -m pytest tests/ -v
+```
+
+**Frontend utility tests:**
+```bash
+cd frontend
+npx vitest --run
+```
+
+**E2E tests** (requires frontend + backend running):
+```bash
+cd frontend
+npx playwright test
+npx playwright show-report
 ```
 
 ---
@@ -88,38 +114,9 @@ docker run -d --name agentic-tree-db \
 |----------|-------------|
 | `DATABASE_URL` | PostgreSQL connection string |
 | `SECRET_KEY` | JWT signing secret |
-| `GROQ_API_KEY` | Groq API key (get from console.groq.com) |
+| `GROQ_API_KEY` | Groq API key (console.groq.com) |
 | `CORS_ORIGINS` | Allowed frontend origins |
-| `VITE_API_BASE_URL` | Backend API URL for frontend |
-
----
-
-## Running Tests
-
-**Backend:**
-```bash
-cd backend
-venv\Scripts\activate
-pytest tests/ -v
-```
-
-**Frontend:**
-```bash
-cd frontend
-npx vitest --run
-```
-
-**E2E:**
-```bash
-cd frontend
-npx playwright test
-```
-
----
-
-## Deployment
-
-See [docs/deployment.md](docs/deployment.md) for full AWS EC2 deployment instructions.
+| `VITE_API_BASE_URL` | Backend API URL |
 
 ---
 
@@ -127,14 +124,28 @@ See [docs/deployment.md](docs/deployment.md) for full AWS EC2 deployment instruc
 
 ```
 agentic-tree/
-├── frontend/          # React + Vite frontend
-├── backend/           # FastAPI backend
+├── frontend/              # React + Vite frontend
+│   ├── src/
+│   │   ├── pages/         # AuthPage, DashboardPage, WorkspacePage
+│   │   ├── components/    # Navbar, LeftSidebar, TreeCanvas, ChatPanel
+│   │   ├── store/         # Redux slices (auth, tree, chat)
+│   │   ├── api/           # Axios API client
+│   │   └── utils/         # treeLayout, traversal algorithms
+│   └── e2e/               # Playwright tests
+├── backend/               # FastAPI backend
 │   ├── app/
-│   │   ├── agents/    # LangGraph multi-agent system
-│   │   ├── routers/   # API endpoints
-│   │   ├── services/  # Business logic
-│   │   ├── models/    # SQLAlchemy models
-│   │   └── schemas/   # Pydantic schemas
-├── docs/              # Documentation
+│   │   ├── agents/        # LangGraph multi-agent system
+│   │   ├── routers/       # API endpoints
+│   │   ├── services/      # Business logic
+│   │   ├── models/        # SQLAlchemy models
+│   │   └── schemas/       # Pydantic schemas
+│   └── tests/             # Pytest tests
+├── docs/                  # Deployment documentation
 └── docker-compose.yml
 ```
+
+---
+
+## Deployment
+
+See [docs/deployment.md](docs/deployment.md) for full deployment instructions on Render.
