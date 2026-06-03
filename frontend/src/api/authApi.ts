@@ -18,17 +18,12 @@ interface AuthResponse {
 }
 
 export async function loginRequest(payload: LoginPayload): Promise<AuthResponse> {
-  // FastAPI OAuth2 form expects application/x-www-form-urlencoded
-  const form = new URLSearchParams()
-  form.append('username', payload.email)
-  form.append('password', payload.password)
-
-  const res = await axiosClient.post<{ access_token: string }>('/auth/login', form, {
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  const res = await axiosClient.post<{ access_token: string }>('/auth/login', {
+    email: payload.email,
+    password: payload.password,
   })
 
   const token = res.data.access_token
-  // Fetch profile with the new token to get user object
   const profileRes = await axiosClient.get<User>('/auth/profile', {
     headers: { Authorization: `Bearer ${token}` },
   })
