@@ -15,7 +15,7 @@ export default function WorkspacePage() {
   const { sessionId } = useParams<{ sessionId: string }>()
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const { isLoading, error } = useAppSelector((s) => s.tree)
+  const { isLoading } = useAppSelector((s) => s.tree)
 
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [showLoadModal, setShowLoadModal] = useState(false)
