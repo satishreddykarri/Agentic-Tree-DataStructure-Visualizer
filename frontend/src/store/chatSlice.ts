@@ -15,9 +15,18 @@ export const sendMessageThunk = createAsyncThunk<
   try {
     const response = await sendMessage({ session_id: sessionId, message, tree_state: treeState })
 
-    // If the AI returned an updated tree, sync it to Redux immediately
+    // If the AI returned an updated tree, sync it to Redux AND save to backend
     if (response.updated_tree) {
       dispatch(setTree(response.updated_tree))
+      // Save the updated tree to the session
+      const { saveSessionThunk } = await import('./treeSlice')
+      const state = (await import('@/store')).store.getState()
+      if (state.tree.sessionId) {
+        dispatch(saveSessionThunk({
+          sessionId: state.tree.sessionId,
+          treeData: response.updated_tree,
+        }))
+      }
     }
 
     const assistantMessage: ChatMessage = {
