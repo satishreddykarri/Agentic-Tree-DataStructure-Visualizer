@@ -15,6 +15,16 @@ def process_message(
     Runs the LangGraph pipeline and persists both the user message
     and the AI response to the database.
     """
+    from app.repositories.tree_repository import get_session, update_session
+
+    # Always use the latest tree from DB to avoid stale state issues
+    db_session = get_session(db, session_id)
+    if db_session and db_session.tree_json:
+        latest_tree = db_session.tree_json
+        # Only use DB tree if it has nodes, otherwise use frontend state
+        if latest_tree.get("nodes"):
+            tree_state = latest_tree
+
     # Persist user message
     save_message(db, user_id=user_id, session_id=session_id, role="user", message=message)
 
@@ -34,17 +44,17 @@ def process_message(
     action = result.get("action")
     error = result.get("error")
 
-    # If there was an error, include it in the explanation
     if error and not explanation:
         explanation = f"Sorry, something went wrong: {error}"
 
     # Persist AI response
     save_message(db, user_id=user_id, session_id=session_id, role="assistant", message=explanation)
 
-    # Extract updated tree if an operation was performed
+    # Extract updated tree and save it to DB immediately
     updated_tree = None
     if action and "updated_tree" in action:
         updated_tree = action["updated_tree"]
+        update_session(db, db_session, tree_json=updated_tree)
 
     return {
         "explanation": explanation,
