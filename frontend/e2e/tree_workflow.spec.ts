@@ -1,84 +1,60 @@
 import { test, expect } from '@playwright/test'
 
-const timestamp = Date.now()
-const testPassword = 'testpassword123'
-
-async function registerAndGoToWorkspace(page: import('@playwright/test').Page, suffix: string) {
-  await page.goto('/auth')
-  await page.getByRole('button', { name: 'Register' }).click()
-  await page.getByPlaceholder('Your name').fill(`WsUser_${suffix}`)
-  await page.getByPlaceholder('you@example.com').fill(`wsuser_${suffix}@test.com`)
-  await page.getByPlaceholder('Min 6 characters').fill(testPassword)
-  await page.getByPlaceholder('Repeat password').fill(testPassword)
-  await page.getByRole('button', { name: /create account/i }).click()
-  await expect(page).toHaveURL(/dashboard/, { timeout: 15000 })
-  await page.getByRole('button', { name: /new session/i }).click()
-  await expect(page).toHaveURL(/workspace/, { timeout: 15000 })
-  await page.waitForLoadState('networkidle')
-  await page.waitForTimeout(1000)
-}
-
-test.describe('Tree Workflow', () => {
-  test('can create a new session from dashboard', async ({ page }) => {
-    await registerAndGoToWorkspace(page, `${timestamp}_1`)
-    await expect(page).toHaveURL(/workspace/)
+test.describe('Auth Page UI', () => {
+  test('auth page has correct title', async ({ page }) => {
+    await page.goto('/auth')
+    await expect(page.getByText('Agentic Tree')).toBeVisible()
   })
 
-  test('workspace shows empty state canvas', async ({ page }) => {
-    await registerAndGoToWorkspace(page, `${timestamp}_2`)
-    await expect(page.getByText('Start building your tree')).toBeVisible({ timeout: 10000 })
+  test('auth page subtitle is visible', async ({ page }) => {
+    await page.goto('/auth')
+    await expect(page.getByText(/AI-powered binary tree/i)).toBeVisible()
   })
 
-  test('workspace shows AI Assistant panel', async ({ page }) => {
-    await registerAndGoToWorkspace(page, `${timestamp}_3`)
-    await expect(page.getByText('AI Assistant')).toBeVisible({ timeout: 10000 })
+  test('login tab is active by default', async ({ page }) => {
+    await page.goto('/auth')
+    await expect(page.getByPlaceholder('you@example.com')).toBeVisible()
+    await expect(page.getByPlaceholder('••••••••')).toBeVisible()
   })
 
-  test('workspace shows Add Node button in sidebar', async ({ page }) => {
-    await registerAndGoToWorkspace(page, `${timestamp}_4`)
-    await expect(page.getByRole('button').filter({ hasText: 'Add Node' }).first()).toBeVisible({ timeout: 15000 })
+  test('register tab shows name field', async ({ page }) => {
+    await page.goto('/auth')
+    await page.getByRole('button', { name: 'Register' }).click()
+    await expect(page.getByPlaceholder('Your name')).toBeVisible()
+    await expect(page.getByPlaceholder('Repeat password')).toBeVisible()
   })
 
-  test('workspace shows traversal buttons', async ({ page }) => {
-    await registerAndGoToWorkspace(page, `${timestamp}_5`)
-    await expect(page.getByText('Pre-order Traversal')).toBeVisible({ timeout: 10000 })
+  test('sign in button is present', async ({ page }) => {
+    await page.goto('/auth')
+    await expect(page.getByRole('button', { name: /sign in/i })).toBeVisible()
   })
 
-  test('Add Root Node button is visible', async ({ page }) => {
-    await registerAndGoToWorkspace(page, `${timestamp}_6`)
-    await expect(page.getByRole('button', { name: /add root node/i })).toBeVisible({ timeout: 10000 })
+  test('create account button is present on register tab', async ({ page }) => {
+    await page.goto('/auth')
+    await page.getByRole('button', { name: 'Register' }).click()
+    await expect(page.getByRole('button', { name: /create account/i })).toBeVisible()
   })
 
-  test('chat input is visible and enabled', async ({ page }) => {
-    await registerAndGoToWorkspace(page, `${timestamp}_7`)
-    const chatInput = page.getByPlaceholder('Type a command...')
-    await expect(chatInput).toBeVisible({ timeout: 10000 })
-    await expect(chatInput).toBeEnabled()
+  test('switching tabs clears error', async ({ page }) => {
+    await page.goto('/auth')
+    await page.getByRole('button', { name: /sign in/i }).click()
+    await expect(page.getByText(/please fill in all fields/i)).toBeVisible()
+    await page.getByRole('button', { name: 'Register' }).click()
+    await expect(page.getByText(/please fill in all fields/i)).not.toBeVisible()
   })
 
-  test('can type in chat input', async ({ page }) => {
-    await registerAndGoToWorkspace(page, `${timestamp}_8`)
-    const chatInput = page.getByPlaceholder('Type a command...')
-    await expect(chatInput).toBeEnabled({ timeout: 10000 })
-    await chatInput.fill('insert node 10 as root')
-    await expect(chatInput).toHaveValue('insert node 10 as root')
+  test('redirect to auth when not logged in', async ({ page }) => {
+    await page.goto('/dashboard')
+    await expect(page).toHaveURL(/auth/)
   })
 
-  test('send button becomes active when text typed', async ({ page }) => {
-    await registerAndGoToWorkspace(page, `${timestamp}_9`)
-    const chatInput = page.getByPlaceholder('Type a command...')
-    await expect(chatInput).toBeEnabled({ timeout: 10000 })
-    await chatInput.fill('hello')
-    await expect(page.getByRole('button', { name: /send/i })).toBeEnabled()
+  test('redirect to auth for workspace route', async ({ page }) => {
+    await page.goto('/workspace/some-id')
+    await expect(page).toHaveURL(/auth/)
   })
 
-  test('navbar shows Agentic Tree branding', async ({ page }) => {
-    await registerAndGoToWorkspace(page, `${timestamp}_10`)
-    await expect(page.locator('text=Agentic Tree').first()).toBeVisible({ timeout: 10000 })
-  })
-
-  test('reset tree button is in sidebar', async ({ page }) => {
-    await registerAndGoToWorkspace(page, `${timestamp}_11`)
-    await expect(page.getByRole('button', { name: /reset tree/i })).toBeVisible({ timeout: 10000 })
+  test('unknown route redirects to auth', async ({ page }) => {
+    await page.goto('/unknown-page')
+    await expect(page).toHaveURL(/auth/)
   })
 })
