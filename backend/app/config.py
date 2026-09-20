@@ -19,6 +19,7 @@ class Settings(BaseSettings):
 
     # Groq
     groq_api_key: str = ""
+    groq_model: str = "groq/compound"
 
     # CORS — allow all localhost variants by default
     cors_origins: str = "http://localhost,http://localhost:80,http://localhost:5173,http://localhost:3000,http://127.0.0.1"

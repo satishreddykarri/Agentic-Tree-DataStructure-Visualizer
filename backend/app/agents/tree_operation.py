@@ -119,7 +119,7 @@ def apply_operation(tree_state: dict, action: dict) -> tuple[dict, str | None]:
 def tree_operation_node(state: AgentState) -> AgentState:
     try:
         llm = ChatGroq(
-            model="llama-3.3-70b-versatile",
+            model=settings.groq_model,
             groq_api_key=settings.groq_api_key,
             temperature=0,
         )
